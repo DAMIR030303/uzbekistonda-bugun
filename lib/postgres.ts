@@ -15,7 +15,7 @@ const postgresConfig = {
 };
 
 // Postgres connection pool
-let pool: Pool | null = null;
+let pool: any = null;
 
 // Postgres mavjudligini tekshirish funksiyasi
 export const isPostgresConfigured = () => {
