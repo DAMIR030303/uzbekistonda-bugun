@@ -5,8 +5,8 @@
  * This script creates the necessary tables and initial data for Railway Postgres
  */
 
-import { PostgresService } from './lib/postgres-service';
-import { isPostgresConfigured } from './lib/postgres';
+import { PostgresService } from '../lib/postgres-service.js';
+import { isPostgresConfigured } from '../lib/postgres.js';
 
 async function initializeRailwayDatabase() {
   console.log('🚀 Starting Railway database initialization...');
