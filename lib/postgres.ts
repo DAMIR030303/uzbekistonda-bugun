@@ -1,4 +1,5 @@
-import { Pool, PoolClient } from 'pg';
+// Dynamic import for server-side only
+let Pool: any, PoolClient: any;
 
 // Postgres konfiguratsiyasi
 const postgresConfig = {
@@ -27,24 +28,32 @@ export const isPostgresConfigured = () => {
 };
 
 // Postgres pool-ni olish
-export const getPostgresPool = (): Pool => {
+export const getPostgresPool = async (): Promise<any> => {
   if (!pool) {
     if (!isPostgresConfigured()) {
       throw new Error('Postgres not configured. Please set POSTGRES_* environment variables.');
     }
-    pool = new Pool(postgresConfig);
     
-    // Pool error handling
-    pool.on('error', (err) => {
-      console.error('Unexpected error on idle client', err);
-    });
+    // Dynamic import for server-side only
+    if (typeof window === 'undefined') {
+      const pg = await import('pg');
+      Pool = pg.Pool;
+      pool = new Pool(postgresConfig);
+      
+      // Pool error handling
+      pool.on('error', (err: any) => {
+        console.error('Unexpected error on idle client', err);
+      });
+    } else {
+      throw new Error('Postgres can only be used on server-side');
+    }
   }
   return pool;
 };
 
 // Postgres client-ni olish
-export const getPostgresClient = async (): Promise<PoolClient> => {
-  const pool = getPostgresPool();
+export const getPostgresClient = async (): Promise<any> => {
+  const pool = await getPostgresPool();
   return await pool.connect();
 };
 

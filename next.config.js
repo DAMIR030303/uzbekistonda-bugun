@@ -7,6 +7,19 @@ const nextConfig = {
   // Remove standalone output for Railway compatibility
   // output: 'standalone',
   trailingSlash: true,
+  webpack: (config, { isServer }) => {
+    // Exclude pg from client-side bundle
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        dns: false,
+      };
+    }
+    return config;
+  },
   async headers() {
     return [
       {

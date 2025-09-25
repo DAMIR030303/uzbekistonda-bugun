@@ -12,6 +12,10 @@ export class PostgresService {
     if (!isPostgresConfigured()) {
       throw new Error("Postgres not configured");
     }
+    // Check if we're on server-side
+    if (typeof window !== 'undefined') {
+      throw new Error("Postgres can only be used on server-side");
+    }
     return await getPostgresClient();
   }
 

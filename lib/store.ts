@@ -152,17 +152,17 @@ export const useAppStore = create<AppState>()(
       loadOrganizations: async () => {
         set({ isLoading: true, error: null });
         try {
-          // Try Postgres first, then Supabase
-          if (isPostgresConfigured()) {
-            console.log("Using Postgres for organizations");
-            const organizations = await PostgresService.getOrganizations();
-            set({ organizations });
-          } else if (isSupabaseConfigured()) {
+          // Try Supabase first (client-side compatible), then Postgres (server-side only)
+          if (isSupabaseConfigured()) {
             console.log("Using Supabase for organizations");
             const organizations = await SupabaseService.getOrganizations();
             set({ organizations });
+          } else if (isPostgresConfigured() && typeof window === 'undefined') {
+            console.log("Using Postgres for organizations (server-side)");
+            const organizations = await PostgresService.getOrganizations();
+            set({ organizations });
           } else {
-            console.warn("Neither Postgres nor Supabase configured - using empty organizations");
+            console.warn("Neither Supabase nor Postgres configured - using empty organizations");
             set({ organizations: [] });
           }
         } catch (error: any) {
