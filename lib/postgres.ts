@@ -1,5 +1,5 @@
 // Dynamic import for server-side only
-let Pool: any, PoolClient: any;
+let Pool: any;
 
 // Postgres konfiguratsiyasi
 const postgresConfig = {
