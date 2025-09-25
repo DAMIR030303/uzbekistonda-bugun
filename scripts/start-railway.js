@@ -5,8 +5,8 @@
  * This script initializes the database and starts the Next.js server
  */
 
-import { PostgresService } from '../lib/postgres-service.js';
-import { isPostgresConfigured } from '../lib/postgres.js';
+import { PostgresService } from '../lib/postgres-service';
+import { isPostgresConfigured } from '../lib/postgres';
 import { spawn } from 'child_process';
 
 async function startRailwayApp() {
