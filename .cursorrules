@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "boshqaruv-mobile-core": {
+      "command": "node",
+      "args": ["mcp-server/dist/index.js"],
+      "cwd": "."
+    },
+    "boshqaruv-mobile-supabase": {
+      "command": "node", 
+      "args": ["mcp-servers/supabase-mcp/dist/index.js"],
+      "cwd": "."
+    },
+    "boshqaruv-mobile-react-native": {
+      "command": "node",
+      "args": ["mcp-servers/react-native-mcp/dist/index.js"], 
+      "cwd": "."
+    },
+    "boshqaruv-mobile-nextjs": {
+      "command": "node",
+      "args": ["mcp-servers/nextjs-mcp/dist/index.js"],
+      "cwd": "."
+    },
+    "boshqaruv-mobile-testing": {
+      "command": "node",
+      "args": ["mcp-servers/testing-mcp/dist/index.js"],
+      "cwd": "."
+    },
+    "boshqaruv-mobile-deployment": {
+      "command": "node",
+      "args": ["mcp-servers/deployment-mcp/dist/index.js"],
+      "cwd": "."
+    }
+  }
+}
