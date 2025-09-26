@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Database } from "@/lib/supabase";
 
 type Organization = Database["public"]["Tables"]["organizations"]["Row"];
@@ -10,6 +10,11 @@ type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export class SupabaseService {
   // Organizations
   static async getOrganizations() {
+    if (!isSupabaseConfigured() || !supabase) {
+      console.warn("Supabase not configured - returning empty organizations");
+      return [];
+    }
+
     try {
       const { data, error } = await supabase
         .from("organizations")
@@ -31,6 +36,10 @@ export class SupabaseService {
   }
 
   static async getOrganizationBySlug(slug: string) {
+    if (!isSupabaseConfigured() || !supabase) {
+      throw new Error("Supabase not configured");
+    }
+
     const { data, error } = await supabase
       .from("organizations")
       .select("*")
@@ -43,13 +52,21 @@ export class SupabaseService {
 
   // Branches
   static async getBranches(organizationId: string) {
+    if (!isSupabaseConfigured() || !supabase) {
+      console.warn("Supabase not configured - returning empty branches");
+      return [];
+    }
+
     const { data, error } = await supabase
       .from("branches")
       .select("*")
       .eq("organization_id", organizationId)
       .order("name");
 
-    if (error) throw error;
+    if (error) {
+      console.warn("Failed to fetch branches:", error.message);
+      return [];
+    }
     return data as Branch[];
   }
 
