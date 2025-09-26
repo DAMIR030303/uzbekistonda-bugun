@@ -1,7 +1,7 @@
 "use client";
 
 import { Building2, MapPin, Users } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { SamarqandImageLogo } from "@/components/SamarqandImageLogo";
 import { NavoiyImageLogo } from "@/components/NavoiyImageLogo";
@@ -9,6 +9,9 @@ import { ToshkentImageLogo } from "@/components/ToshkentImageLogo";
 import { AdminLogin } from "@/components/AdminLogin";
 import { useAppStore } from "@/lib/store";
 import { FILIALS, ACTIVE_USERS_COUNT, COLOR_CLASSES, type Filial } from "@/lib/constants";
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   const [selectedFilial, setSelectedFilial] = useState<Filial | null>(null);

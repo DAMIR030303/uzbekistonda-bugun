@@ -4,6 +4,9 @@ const nextConfig = {
     // Avoid blocking builds due to environment-specific ESLint resolver issues
     ignoreDuringBuilds: true,
   },
+  // Disable static generation to avoid Supabase issues during build
+  output: 'standalone',
+  trailingSlash: true,
   async headers() {
     return [
       {

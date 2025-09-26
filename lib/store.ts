@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 import type { Database } from "@/lib/supabase";
 import { SupabaseService } from "@/lib/supabase-service";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 type Organization = Database["public"]["Tables"]["organizations"]["Row"];
 type Branch = Database["public"]["Tables"]["branches"]["Row"];
@@ -149,6 +150,11 @@ export const useAppStore = create<AppState>()(
       loadOrganizations: async () => {
         set({ isLoading: true, error: null });
         try {
+          if (!isSupabaseConfigured()) {
+            console.warn("Supabase not configured - using empty organizations");
+            set({ organizations: [] });
+            return;
+          }
           const organizations = await SupabaseService.getOrganizations();
           set({ organizations });
         } catch (error: any) {
