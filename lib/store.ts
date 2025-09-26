@@ -4,6 +4,8 @@ import { persist } from "zustand/middleware";
 import type { Database } from "@/lib/supabase";
 import { SupabaseService } from "@/lib/supabase-service";
 import { isSupabaseConfigured } from "@/lib/supabase";
+import { PostgresService } from "@/lib/postgres-service";
+import { isPostgresConfigured } from "@/lib/postgres";
 
 type Organization = Database["public"]["Tables"]["organizations"]["Row"];
 type Branch = Database["public"]["Tables"]["branches"]["Row"];
@@ -150,13 +152,19 @@ export const useAppStore = create<AppState>()(
       loadOrganizations: async () => {
         set({ isLoading: true, error: null });
         try {
-          if (!isSupabaseConfigured()) {
-            console.warn("Supabase not configured - using empty organizations");
+          // Try Postgres first, then Supabase
+          if (isPostgresConfigured()) {
+            console.log("Using Postgres for organizations");
+            const organizations = await PostgresService.getOrganizations();
+            set({ organizations });
+          } else if (isSupabaseConfigured()) {
+            console.log("Using Supabase for organizations");
+            const organizations = await SupabaseService.getOrganizations();
+            set({ organizations });
+          } else {
+            console.warn("Neither Postgres nor Supabase configured - using empty organizations");
             set({ organizations: [] });
-            return;
           }
-          const organizations = await SupabaseService.getOrganizations();
-          set({ organizations });
         } catch (error: any) {
           console.warn("Failed to load organizations:", error.message);
           // Don't set error for missing organizations table - just use empty array
