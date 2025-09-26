@@ -5,8 +5,8 @@
  * This script creates the necessary tables and initial data
  */
 
-import { PostgresService } from '../lib/postgres-service';
-import { isPostgresConfigured } from '../lib/postgres';
+import { PostgresService } from '../lib/postgres-service.js';
+import { isPostgresConfigured } from '../lib/postgres.js';
 
 async function initializeDatabase() {
   console.log('🚀 Starting database initialization...');
