@@ -8,6 +8,14 @@ type Plan = Database["public"]["Tables"]["plans"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 
 export class SupabaseService {
+  // Helper method to check if Supabase is available
+  private static checkSupabase() {
+    if (!isSupabaseConfigured() || !supabase) {
+      throw new Error("Supabase not configured");
+    }
+    return supabase;
+  }
+
   // Organizations
   static async getOrganizations() {
     if (!isSupabaseConfigured() || !supabase) {
@@ -23,24 +31,19 @@ export class SupabaseService {
 
       if (error) {
         console.warn("Supabase organizations table not found or error:", error.message);
-        // Supabase organizations error - fallback to default data
         return [];
       }
 
       return (data as Organization[]) || [];
     } catch (error) {
       console.warn("Failed to fetch organizations:", error);
-      // Failed to fetch organizations - fallback to default data
       return [];
     }
   }
 
   static async getOrganizationBySlug(slug: string) {
-    if (!isSupabaseConfigured() || !supabase) {
-      throw new Error("Supabase not configured");
-    }
-
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("organizations")
       .select("*")
       .eq("slug", slug)
@@ -71,7 +74,8 @@ export class SupabaseService {
   }
 
   static async getBranchBySlug(organizationId: string, slug: string) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("branches")
       .select("*")
       .eq("organization_id", organizationId)
@@ -84,7 +88,8 @@ export class SupabaseService {
 
   // User Profiles
   static async getUserProfile(userId: string) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("user_profiles")
       .select(
         `
@@ -107,7 +112,8 @@ export class SupabaseService {
     userId: string,
     updates: Partial<UserProfile>
   ) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("user_profiles")
       .update(updates)
       .eq("id", userId)
@@ -120,7 +126,8 @@ export class SupabaseService {
 
   // Plans
   static async getPlans(organizationId: string, branchId?: string) {
-    let query = supabase
+    const supabaseClient = this.checkSupabase();
+    let query = supabaseClient
       .from("plans")
       .select(
         `
@@ -148,7 +155,8 @@ export class SupabaseService {
   static async createPlan(
     plan: Database["public"]["Tables"]["plans"]["Insert"]
   ) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("plans")
       .insert(plan)
       .select()
@@ -159,7 +167,8 @@ export class SupabaseService {
   }
 
   static async updatePlan(planId: string, updates: Partial<Plan>) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("plans")
       .update(updates)
       .eq("id", planId)
@@ -171,7 +180,8 @@ export class SupabaseService {
   }
 
   static async deletePlan(planId: string) {
-    const { error } = await supabase.from("plans").delete().eq("id", planId);
+    const supabaseClient = this.checkSupabase();
+    const { error } = await supabaseClient.from("plans").delete().eq("id", planId);
 
     if (error) throw error;
   }
@@ -182,7 +192,8 @@ export class SupabaseService {
     branchId?: string,
     planId?: string
   ) {
-    let query = supabase
+    const supabaseClient = this.checkSupabase();
+    let query = supabaseClient
       .from("tasks")
       .select(
         `
@@ -216,7 +227,8 @@ export class SupabaseService {
   static async createTask(
     task: Database["public"]["Tables"]["tasks"]["Insert"]
   ) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("tasks")
       .insert(task)
       .select()
@@ -227,7 +239,8 @@ export class SupabaseService {
   }
 
   static async updateTask(taskId: string, updates: Partial<Task>) {
-    const { data, error } = await supabase
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient
       .from("tasks")
       .update(updates)
       .eq("id", taskId)
@@ -239,14 +252,16 @@ export class SupabaseService {
   }
 
   static async deleteTask(taskId: string) {
-    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+    const supabaseClient = this.checkSupabase();
+    const { error } = await supabaseClient.from("tasks").delete().eq("id", taskId);
 
     if (error) throw error;
   }
 
   // Auth
   static async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
       password,
     });
@@ -266,7 +281,8 @@ export class SupabaseService {
       role: string;
     }
   ) {
-    const { data, error } = await supabase.auth.signUp({
+    const supabaseClient = this.checkSupabase();
+    const { data, error } = await supabaseClient.auth.signUp({
       email,
       password,
       options: {
@@ -279,15 +295,17 @@ export class SupabaseService {
   }
 
   static async signOut() {
-    const { error } = await supabase.auth.signOut();
+    const supabaseClient = this.checkSupabase();
+    const { error } = await supabaseClient.auth.signOut();
     if (error) throw error;
   }
 
   static async getCurrentUser() {
+    const supabaseClient = this.checkSupabase();
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser();
+    } = await supabaseClient.auth.getUser();
     if (error) throw error;
     return user;
   }
@@ -297,7 +315,8 @@ export class SupabaseService {
     organizationId: string,
     callback: (payload: any) => void
   ) {
-    return supabase
+    const supabaseClient = this.checkSupabase();
+    return supabaseClient
       .channel("plans")
       .on(
         "postgres_changes",
@@ -316,7 +335,8 @@ export class SupabaseService {
     organizationId: string,
     callback: (payload: any) => void
   ) {
-    return supabase
+    const supabaseClient = this.checkSupabase();
+    return supabaseClient
       .channel("tasks")
       .on(
         "postgres_changes",
