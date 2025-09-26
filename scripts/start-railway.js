@@ -28,10 +28,28 @@ async function startRailwayApp() {
   
   // Start Next.js server
   console.log('🌐 Starting Next.js server...');
-  const nextProcess = spawn('pnpm', ['run', 'start'], {
-    stdio: 'inherit',
-    env: { ...process.env }
-  });
+  
+  // Check if standalone build exists (Railway default)
+  const fs = await import('fs');
+  const path = await import('path');
+  
+  const standalonePath = path.join(process.cwd(), '.next', 'standalone', 'server.js');
+  const isStandalone = fs.existsSync(standalonePath);
+  
+  let nextProcess;
+  if (isStandalone) {
+    console.log('📦 Using standalone build...');
+    nextProcess = spawn('node', [standalonePath], {
+      stdio: 'inherit',
+      env: { ...process.env }
+    });
+  } else {
+    console.log('🚀 Using standard Next.js start...');
+    nextProcess = spawn('pnpm', ['run', 'start'], {
+      stdio: 'inherit',
+      env: { ...process.env }
+    });
+  }
   
   nextProcess.on('error', (error) => {
     console.error('❌ Failed to start Next.js server:', error);
