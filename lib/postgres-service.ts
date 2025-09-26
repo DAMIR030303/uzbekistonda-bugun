@@ -1,4 +1,3 @@
-import { PoolClient } from 'pg';
 import { getPostgresClient, isPostgresConfigured, type Database } from '@/lib/postgres';
 
 type Organization = Database["public"]["Tables"]["organizations"]["Row"];
