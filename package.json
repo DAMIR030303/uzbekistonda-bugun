@@ -12,7 +12,8 @@
     "test": "jest",
     "prepare": "husky",
     "init-db": "node scripts/init-database.js",
-    "init-railway-db": "node scripts/init-railway-db.js"
+    "init-railway-db": "node scripts/init-railway-db.js",
+    "start:railway": "node scripts/start-railway.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
