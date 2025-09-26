@@ -1,7 +1,7 @@
 "use client";
 
 import { Building2, MapPin, Users } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { SamarqandImageLogo } from "@/components/SamarqandImageLogo";
 import { NavoiyImageLogo } from "@/components/NavoiyImageLogo";
