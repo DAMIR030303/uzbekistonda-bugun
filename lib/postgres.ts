@@ -2,11 +2,11 @@ import { Pool, PoolClient } from 'pg';
 
 // Postgres konfiguratsiyasi
 const postgresConfig = {
-  host: process.env.POSTGRES_HOST || 'localhost',
-  port: parseInt(process.env.POSTGRES_PORT || '5432'),
-  database: process.env.POSTGRES_DB || 'boshqaruv',
-  user: process.env.POSTGRES_USER || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'password',
+  host: process.env.POSTGRES_HOST || process.env.PGHOST || 'localhost',
+  port: parseInt(process.env.POSTGRES_PORT || process.env.PGPORT || '5432'),
+  database: process.env.POSTGRES_DB || process.env.PGDATABASE || 'boshqaruv',
+  user: process.env.POSTGRES_USER || process.env.PGUSER || 'postgres',
+  password: process.env.POSTGRES_PASSWORD || process.env.PGPASSWORD || 'password',
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
@@ -19,10 +19,10 @@ let pool: Pool | null = null;
 // Postgres mavjudligini tekshirish funksiyasi
 export const isPostgresConfigured = () => {
   return !!(
-    process.env.POSTGRES_HOST &&
-    process.env.POSTGRES_DB &&
-    process.env.POSTGRES_USER &&
-    process.env.POSTGRES_PASSWORD
+    (process.env.POSTGRES_HOST || process.env.PGHOST) &&
+    (process.env.POSTGRES_DB || process.env.PGDATABASE) &&
+    (process.env.POSTGRES_USER || process.env.PGUSER) &&
+    (process.env.POSTGRES_PASSWORD || process.env.PGPASSWORD)
   );
 };
 

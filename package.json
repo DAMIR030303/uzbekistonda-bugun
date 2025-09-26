@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "test": "jest",
     "prepare": "husky",
-    "init-db": "node scripts/init-database.js"
+    "init-db": "node scripts/init-database.js",
+    "init-railway-db": "node scripts/init-railway-db.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",

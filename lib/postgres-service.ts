@@ -8,7 +8,7 @@ type Task = Database["public"]["Tables"]["tasks"]["Row"];
 
 export class PostgresService {
   // Helper method to check if Postgres is available
-  private static async checkPostgres() {
+  static async checkPostgres() {
     if (!isPostgresConfigured()) {
       throw new Error("Postgres not configured");
     }
